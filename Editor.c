@@ -1906,11 +1906,10 @@ void GetInputString(unsigned char *prompt) {
     SCursor(strlen((char *)prompt), VHeight + 1);
 #ifdef PICOCALC
     MX470Cursor(strlen((char *)prompt) * gui_font_width, LCD_HEIGHT - gui_font_height);
-    for(p = inpbuf; (*p = MMgetchar()) != '\n'; p++) {              // get the input
 #else
     MX470Cursor(strlen((char *)prompt) * gui_font_width, VRes - gui_font_height);
-    for(p = inpbuf; (*p = MMgetchar()) != '\r'; p++) {              // get the input
 #endif
+    for(p = inpbuf; (*p = MMgetchar()) != '\r'; p++) {              // get the input
         if(*p == 0xb3 || *p == F3 || *p == ESC) { p++; break; }     // return if it is SHIFT-F3, F3 or ESC
         if(isprint(*p)) {
             SSputchar(*p,1);                                          // echo the char
