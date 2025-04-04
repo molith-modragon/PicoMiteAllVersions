@@ -72,7 +72,7 @@ int StartEditChar = 0;
 static bool markmode=false;
 extern void routinechecks(void);
 int8_t optioncolourcodesave;
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
 //replace all VRes to LCD_HEIGHT here
 extern  short offsetY;
 #endif
@@ -232,7 +232,7 @@ static char (*SSputchar)(char buff, int flush)=SerialConsolePutC;
                                     break;
 #endif
             case CLEAR_TO_EOS:      DrawBox(CurrentX, CurrentY, HRes-1, CurrentY + gui_font_height-1, 0, 0, gui_bcolour);
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
                                     DrawRectangle(0, CurrentY + gui_font_height, HRes-1, LCD_HEIGHT-1, gui_bcolour);
 #else
                                     DrawRectangle(0, CurrentY + gui_font_height, HRes-1, VRes-1, gui_bcolour);
@@ -266,7 +266,7 @@ static char (*SSputchar)(char buff, int flush)=SerialConsolePutC;
                                     if(DISPLAY_TYPE==SCREENMODE1 && Option.ColourCode && ytileheight==gui_font_height)for(int i=0; i<HRes/8; i++)tilefcols[(Option.Height - 2)*X_TILE+i]=0x9999;
 #endif
 #endif
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
                                     CurrentX = 0; CurrentY = LCD_HEIGHT - gui_font_height;
 #else
                                     CurrentX = 0; CurrentY = (VRes/gui_font_height)*gui_font_height - gui_font_height;
@@ -393,7 +393,7 @@ void edit(unsigned char *cmdline, bool cmdfile) {
     EdBuff = GetTempMemory(EDIT_BUFFER_SIZE);
     edit_buff_size=EDIT_BUFFER_SIZE;
     *EdBuff = 0;
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     VHeight = LCD_HEIGHT/gui_font_height - 2;
 #else
     VHeight = Option.Height - 2;
@@ -465,7 +465,7 @@ void edit(unsigned char *cmdline, bool cmdfile) {
     if(p > EdBuff) --p;
     *p = 0;                                                         // erase the last line terminator
     //Only setterminal if editor requires is bigger than 80*24
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     int op_height = LCD_HEIGHT/gui_font_height;
     if  (Option.Width > SCREENWIDTH || op_height > SCREENHEIGHT){
       setterminal((op_height> SCREENHEIGHT)?op_height:SCREENHEIGHT,(Option.Width > SCREENWIDTH)?Option.Width:SCREENWIDTH);                                                    // or height is > 24
@@ -474,9 +474,10 @@ void edit(unsigned char *cmdline, bool cmdfile) {
     if  (Option.Width > SCREENWIDTH || Option.Height > SCREENHEIGHT){ 
       setterminal((Option.Height > SCREENHEIGHT)?Option.Height:SCREENHEIGHT,(Option.Width > SCREENWIDTH)?Option.Width:SCREENWIDTH);                                                    // or height is > 24
     }
+#endif
     PrintString("\033[?1000h");                                   // Tera Term turn on mouse click report in VT200 mode
     PrintString("\0337\033[2J\033[H");                            // vt100 clear screen and home cursor
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     ResetHWScroll();
 #endif
     MX470Display(DISPLAY_CLS);                                      // clear screen on the MX470 display only
@@ -911,7 +912,7 @@ void FullScreenEditor(int xx, int yy, char *fname, int edit_buff_size, bool cmdf
                             // this must be an ordinary escape (not part of an escape code)
                             if(TextChanged) {
                                 GetInputString((unsigned char *)"Exit and discard all changes (Y/N): ");
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
                                 if(toupper(*inpbuf) == 'Y'){
                                     goto exit_switch;
                                 }else{
@@ -1127,12 +1128,12 @@ void FullScreenEditor(int xx, int yy, char *fname, int edit_buff_size, bool cmdf
             for(i = 0; i < MAXCLIP + 1; i++) buf[i] = buf[i + 1];                // suffle down the buffer to get the next char
         } while(*buf);
     }
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
 exit_switch:
     ResetHWScroll();
     ClearScreen(gui_bcolour);
-}
 #endif
+}
 
 /*******************************************************************************************************************
   UTILITY FUNCTIONS USED BY THE FULL SCREEN EDITOR
@@ -1830,7 +1831,7 @@ void PrintStatus(void) {
     strcat(s, "       ");
     strcpy(s + 19, insert?"INS":"OVR");
 
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     MX470Cursor((VWidth - strlen(s)) * gui_font_width, LCD_HEIGHT - gui_font_height);
 #else
     MX470Cursor((VWidth - strlen(s)) * gui_font_width, (VRes/gui_font_height)*gui_font_height - gui_font_height);
@@ -1852,7 +1853,7 @@ void editDisplayMsg(unsigned char *msg) {
     SCursor(0, VHeight + 1);
     if(Option.ColourCode) PrintString(VT100_C_ERROR);
     PrintString("\033[7m");
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     MX470Cursor(0, LCD_HEIGHT - gui_font_height);
 #else
     MX470Cursor(0, VRes - gui_font_height);
@@ -1892,7 +1893,7 @@ void GetInputString(unsigned char *prompt) {
 
     SCursor(0, VHeight + 1);
     PrintString((char *)prompt);
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     MX470Cursor(0, LCD_HEIGHT - gui_font_height);
 #else
     MX470Cursor(0, VRes - gui_font_height);
@@ -1903,7 +1904,7 @@ void GetInputString(unsigned char *prompt) {
         MX470PutC(' ');
     }
     SCursor(strlen((char *)prompt), VHeight + 1);
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     MX470Cursor(strlen((char *)prompt) * gui_font_width, LCD_HEIGHT - gui_font_height);
     for(p = inpbuf; (*p = MMgetchar()) != '\n'; p++) {              // get the input
 #else

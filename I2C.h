@@ -85,7 +85,7 @@ extern char *I2C_Slave_Send_IntLine;                                // pointer t
 extern char *I2C_Slave_Receive_IntLine;                             // pointer to the slave receive interrupt line number
 extern char *I2C2_Slave_Send_IntLine;                                // pointer to the slave send interrupt line number
 extern char *I2C2_Slave_Receive_IntLine;                             // pointer to the slave receive interrupt line number
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
 extern void I2C_Send_RegData(int i2caddr,int reg,char command);
 #endif
 extern void I2C_Send_Command(char command);

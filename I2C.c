@@ -124,7 +124,7 @@ These are the functions responsible for executing the I2C related commands in MM
 They are supported by utility functions that are grouped at the end of this file
 
 ********************************************************************************************/
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
 void I2C_Send_RegData(int i2caddr,int reg,char command){
     int i2cret;
     I2C_Send_Buffer[0]=reg;
@@ -429,7 +429,7 @@ void CheckI2CKeyboard(int noerror, int read){
 		}
 		uSec(1000);
 		if(buff){
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
 			if(buff==0xA503)ctrlheld=0;
 			else if(buff==0xA502) {
 				ctrlheld=1;

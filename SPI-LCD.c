@@ -135,7 +135,7 @@ void DrawBufferMEM(int x1, int y1, int x2, int y2, unsigned char* p) ;
 void ReadBufferMEM(int x1, int y1, int x2, int y2, unsigned char* buff);
 void spi_write_CommandData(const uint8_t* pCommandData, uint8_t datalen);
 void ST7920command(unsigned char data);
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
 extern short offsetY;
 #endif
 // utility function for routines that want to reserve a pin for special I/O
@@ -279,13 +279,13 @@ void MIPS16 InitDisplaySPI(int InitOnly) {
     switch(Option.DISPLAY_TYPE) {
 		case ILI9488:
 		case ILI9488W:
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
 			DisplayHRes = 320;
 			DisplayVRes = 480;
 #endif
 			ResetController();
 			if(Option.DISPLAY_TYPE==ILI9488){
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
                 spi_write_command(0xF0);
                 spi_write_data(0xC3);
                 spi_write_command(0xF0);
@@ -515,7 +515,7 @@ void MIPS16 InitDisplaySPI(int InitOnly) {
 				case RLANDSCAPE:    spi_write_cd(ILI9341_MEMCONTROL,1,ILI9341_Landscape180); break;
 				case RPORTRAIT:     spi_write_cd(ILI9341_MEMCONTROL,1,ILI9341_Portrait180); break;
 			}
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
             setScrollArea(0,0);
 #endif
  			break;
@@ -935,7 +935,7 @@ void MIPS16 InitDisplaySPI(int InitOnly) {
         HRes=DisplayVRes;
         VRes=DisplayHRes;
     }
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     VRes=DisplayVRes;
     HRes=DisplayHRes;
 #endif
@@ -1184,7 +1184,7 @@ void DrawRectangleSPI(int x1, int y1, int x2, int y2, int c){
 	if(x1==x2 && y1==y2){
 		if(x1 < 0) return;
 	    if(x1 >= HRes) return;
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
         if(y1 < 0)  {y1 = LCD_REAL_HEIGHT+y1;}
         if(y1 >= VRes) {y1 = y1 % LCD_REAL_HEIGHT;}
         y1 += offsetY;
@@ -1218,7 +1218,7 @@ void DrawRectangleSPI(int x1, int y1, int x2, int y2, int c){
 		if(x1 >= HRes) x1 = HRes - 1;
 		if(x2 < 0) x2 = 0;
 		if(x2 >= HRes) x2 = HRes - 1;
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
         y1 += offsetY;
         y2 += offsetY;
 
@@ -1297,7 +1297,7 @@ void DrawBitmapSPI(int x1, int y1, int width, int height, int scale, int fc, int
     char rgbbytes[4];
     unsigned int rgb;
     } c;
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     y1 += offsetY; y1 = y1 %LCD_REAL_HEIGHT;
 #endif
     if(bc == -1 && (void *)ReadBuffer == (void *)DisplayNotSet) bc = 0x0;
@@ -1843,7 +1843,7 @@ int GetLineILI9341(void){
 }
 #endif
 
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
 void setScrollArea(uint16_t topFixedArea, uint16_t bottomFixedArea) {
 
   spi_write_command(0x33); // Vertical HWScroll definition

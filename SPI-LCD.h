@@ -430,7 +430,7 @@ extern void __not_in_flash_func(spi_finish)(spi_inst_t *spi);
 #define P_I2C_SCL            0
 #define P_I2C_SDA            1
 
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
 #define LCD_WIDTH 320
 #define LCD_HEIGHT 320
 #define LCD_REAL_HEIGHT 480 // ILI9488 real height is 480
@@ -475,7 +475,7 @@ extern void BitBangReadSPI(BYTE *buff, int cnt);
 extern void ScrollLCDSPI(int lines);
 extern void SetCS(void);
 extern int GetLineILI9341(void);
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
 void setScrollArea(uint16_t topFixedArea, uint16_t bottomFixedArea);
 void HWScroll(uint16_t pixels);
 extern void ResetHWScroll();

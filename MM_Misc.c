@@ -2364,7 +2364,7 @@ void MIPS16 ConfigDisplayUser(unsigned char *tp){
 }
 void MIPS16 clear320(void){
     if(SPI480){
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
         HRes=320;
         VRes=480;
 #else

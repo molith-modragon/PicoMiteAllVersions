@@ -3992,7 +3992,7 @@ void MIPS16 cmd_files(void)
     FatFSFileSystem=t-1;
     fullpath(q);
     if(Option.DISPLAY_CONSOLE){ClearScreen(gui_bcolour);CurrentX=0;CurrentY=0;}
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     ResetHWScroll();
 #endif
     putConsole('A'+FatFSFileSystem,0);
@@ -4878,7 +4878,7 @@ void LoadOptions(void)
     RGB121map[14] = YELLOW;
     RGB121map[15] = WHITE;
 
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     Option.DISPLAY_TYPE = ILI9488;
     Option.SYSTEM_CLK = 14;
     Option.SYSTEM_MOSI = 15;

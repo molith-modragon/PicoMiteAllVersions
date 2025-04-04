@@ -176,7 +176,8 @@ int ScreenSize=0;
     uint32_t mergetimer=0;
     #endif
 #endif
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+
+#ifdef PICOCALC
 short offsetY = 0;
 #endif
 
@@ -3415,7 +3416,7 @@ if ((p = checkstring(cmdline, (unsigned char*)"COMPRESSED"))) {
 }
 /*  @endcond */
 void cmd_cls(void) {
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     ResetHWScroll();
 #endif
 
@@ -7798,7 +7799,7 @@ void MIPS16 DrawBitmapUser(int x1, int y1, int width, int height, int scale, int
 
 void ScrollLCDSPI(int lines){
     if(lines==0)return;
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
     if (lines >= 0) {
         HWScroll(offsetY);
     }
@@ -7852,7 +7853,7 @@ void SetFont(int fnt) {
     gui_font_width = FontTable[fnt >> 4][0] * (fnt & 0b1111);
     gui_font_height = FontTable[fnt >> 4][1] * (fnt & 0b1111);
    if(Option.DISPLAY_CONSOLE) {
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
         Option.Height = LCD_HEIGHT/gui_font_height;
 #else
         Option.Height = VRes/gui_font_height;
@@ -8072,7 +8073,7 @@ void DisplayPutC(char c) {
         case '\r':  CurrentX = 0;
                     return;
         case '\n':  CurrentY += gui_font_height;
-#if defined(PICOCALC) || defined(PICOCALCW) || defined(PICOCALC2350)
+#ifdef PICOCALC
                     if(CurrentY + gui_font_height >= LCD_HEIGHT) {
                         if(Option.NoScroll && Option.DISPLAY_CONSOLE){ClearScreen(gui_bcolour);CurrentX=0;CurrentY=0;}
                         else {
