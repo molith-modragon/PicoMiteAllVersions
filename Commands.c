@@ -558,7 +558,7 @@ void MIPS16 cmd_list(void) {
 		}
 		
    	} else if((p = checkstring(cmdline, (unsigned char *)"PINS"))) {
-#if defined(PICOMITEWEB)
+#if defined(PICOMITEWEB) && defined(rp2350)
 		if(!rp2350a)error("Incompatible board, RP2350A only" );
 #endif
 		CallExecuteProgram((char *)pinlist);
