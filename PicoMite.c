@@ -4152,11 +4152,18 @@ if(Option.CPU_Speed==FreqSVGA){ //adjust the size of the heap
 #endif
 	InitBasic();
 #ifndef PICOMITEVGA
+#ifndef PICOCALC
     InitDisplaySSD();
+#endif
     InitDisplaySPI(0);
+#ifndef PICOCALC
     InitDisplayI2C(0);
     InitDisplayVirtual();
+#endif
     InitTouch();
+#ifdef PICOCALC
+    uSec(300000);
+#endif
     if(Option.BackLightLevel)setBacklight(Option.BackLightLevel);
 #endif
     ErrorInPrompt = false;
