@@ -2,11 +2,13 @@ cmake_minimum_required(VERSION 3.13)
 # Valid builds are PICO, PICOUSB, VGA, VGAUSB, HDMI(rp2350 only), HDMIUSB(rp2350 only), WEB
 
 set(PICOCALC true)
+#set(SDBOOT true)
 
 # Compile for PICO 1 Board
 #set(COMPILE PICO)
 
 # Compile for PICO 2 Board
+#set(COMPILE PICORP2350)
 set(COMPILE WEBRP2350)
 
 if (COMPILE STREQUAL "HDMI" OR COMPILE STREQUAL "WEBRP2350" OR COMPILE STREQUAL "HDMIUSB"  OR COMPILE STREQUAL "VGARP2350"  OR COMPILE STREQUAL "VGAUSBRP2350"  OR COMPILE STREQUAL "PICORP2350"  OR COMPILE STREQUAL "PICOUSBRP2350" )
@@ -258,4 +260,8 @@ if(COMPILE STREQUAL "WEB" OR COMPILE STREQUAL "WEBRP2350" )
 	target_link_libraries(PicoMite
 	pico_cyw43_arch_lwip_poll
 	)
+endif()
+
+if(SDBOOT STREQUAL "true")
+	pico_set_linker_script(PicoMite ${CMAKE_SOURCE_DIR}/memmap_sdcard_app.ld)
 endif()
