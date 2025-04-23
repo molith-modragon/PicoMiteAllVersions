@@ -176,6 +176,11 @@ int ScreenSize=0;
     uint32_t mergetimer=0;
     #endif
 #endif
+
+//#ifdef PICOCALC
+//short offsetY = 0;
+//#endif
+
 void cmd_ReadTriangle(unsigned char *p);
 void (*DrawRectangle)(int x1, int y1, int x2, int y2, int c) = (void (*)(int , int , int , int , int ))DisplayNotSet;
 void (*DrawBitmap)(int x1, int y1, int width, int height, int scale, int fc, int bc, unsigned char *bitmap) = (void (*)(int , int , int , int , int , int , int , unsigned char *))DisplayNotSet;
@@ -3412,6 +3417,10 @@ if ((p = checkstring(cmdline, (unsigned char*)"COMPRESSED"))) {
 }
 /*  @endcond */
 void cmd_cls(void) {
+//#ifdef PICOCALC
+//    ResetHWScroll();
+//#endif
+
     if(Option.DISPLAY_TYPE == 0) error("Display not configured");
 #ifdef GUICONTROLS
     HideAllControls();
@@ -7833,7 +7842,11 @@ void SetFont(int fnt) {
     gui_font_width = FontTable[fnt >> 4][0] * (fnt & 0b1111);
     gui_font_height = FontTable[fnt >> 4][1] * (fnt & 0b1111);
    if(Option.DISPLAY_CONSOLE) {
+//#ifdef PICOCALC
+//        Option.Height = LCD_HEIGHT/gui_font_height;
+//#else
         Option.Height = VRes/gui_font_height;
+//#endif
         Option.Width = HRes/gui_font_width;
     }
     gui_font = fnt;
@@ -8049,11 +8062,28 @@ void DisplayPutC(char c) {
         case '\r':  CurrentX = 0;
                     return;
         case '\n':  CurrentY += gui_font_height;
+//#ifdef PICOCALC
+//                    if(CurrentY + gui_font_height >= LCD_HEIGHT) {
+//                        if(Option.NoScroll && Option.DISPLAY_CONSOLE){ClearScreen(gui_bcolour);CurrentX=0;CurrentY=0;}
+//                        else {
+//                            int lines= 0;
+//                            lines = CurrentY + gui_font_height - LCD_HEIGHT;
+//                            DrawRectangleSPI(CurrentX,CurrentY,HRes-1,CurrentY+lines,BLACK);
+//                            offsetY += lines;
+//                            if(offsetY >= LCD_REAL_HEIGHT){
+//                                offsetY -= LCD_REAL_HEIGHT;
+//                            }
+//
+//                            ScrollLCDSPI(lines);
+//
+//                            CurrentY -= lines;
+//#else
                     if(CurrentY + gui_font_height >= (VRes/gui_font_height)*gui_font_height) {
                         if(Option.NoScroll && Option.DISPLAY_CONSOLE){ClearScreen(gui_bcolour);CurrentX=0;CurrentY=0;}
                         else {
                             ScrollLCD(CurrentY + gui_font_height - VRes);
                             CurrentY -= (CurrentY + gui_font_height - VRes);
+//#endif
                         }
                     }
                     return;
