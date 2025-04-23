@@ -638,6 +638,7 @@ drwav_bool32 onSeek(void  *userdata,  int offset,  drwav_seek_origin origin){
 	}
     return 1;
 }
+#ifdef rp2350
 drwav_bool32 onTell(void  *userdata,  drmp3_int64* pCursor){
 	if(filesource[WAV_fnbr]==FATFSFILE){
 		*pCursor=(*(FileTable[WAV_fnbr].fptr)).fptr;
@@ -646,6 +647,7 @@ drwav_bool32 onTell(void  *userdata,  drmp3_int64* pCursor){
 	}
     return 1;
 }
+#endif
 
 void CloseAudio(int all){
 #ifdef rp2350
