@@ -2365,6 +2365,10 @@ void MIPS16 ConfigDisplayUser(unsigned char *tp){
 }
 void MIPS16 clear320(void){
     if(SPI480){
+#ifdef PICOCALC
+        HRes=320;
+        VRes=480;
+#else
         if(Option.DISPLAY_ORIENTATION & 1) {
             HRes=DisplayHRes;
             VRes=DisplayVRes;
@@ -2372,6 +2376,7 @@ void MIPS16 clear320(void){
             HRes=DisplayVRes;
             VRes=DisplayHRes;
         }
+#endif
         return;
     }
     screen320=0;
