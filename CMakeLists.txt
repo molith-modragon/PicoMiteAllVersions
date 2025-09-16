@@ -4,12 +4,6 @@ cmake_minimum_required(VERSION 3.13)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(PICOCALC true)
-# For dynamic loading from SD card:
-# SDBOOT requires the bootloader to be in the first 256KB of flash
-# PicoMite will need to be shifted by this amount, and all references to
-# positions in flash updated to accomodate. THIS OPTION IS NOT READY YET.
-# details: https://github.com/adwuard/Picocalc_SD_Boot
-#set(SDBOOT true)
 
 # Compile for PICO 1 Board
 #set(COMPILE PICO)
@@ -18,12 +12,13 @@ set(PICOCALC true)
 set(COMPILE PICORP2350)
 #set(COMPILE WEBRP2350)
 
+
 if (COMPILE STREQUAL "HDMI" OR COMPILE STREQUAL "WEBRP2350" OR COMPILE STREQUAL "HDMIUSB"  OR COMPILE STREQUAL "VGARP2350"  OR COMPILE STREQUAL "VGAUSBRP2350"  OR COMPILE STREQUAL "PICORP2350"  OR COMPILE STREQUAL "PICOUSBRP2350" )
 	set(PICO_PLATFORM rp2350)
 	if (COMPILE STREQUAL "WEBRP2350")
 		set(PICO_BOARD pico2_w)
 	else()
-		set(PICO_BOARD pimoroni_pga2350)
+		set(PICO_BOARD pico2)
 	endif()
 else()
 	set(PICO_PLATFORM rp2040)
@@ -178,7 +173,6 @@ target_compile_options(PicoMite PRIVATE -DNDEBUG
 										-DPICO_XOSC_STARTUP_DELAY_MULTIPLIER=64
 										-DPICO_CLOCK_AJDUST_PERI_CLOCK_WITH_SYS_CLOCK
 										-DPICO_XOSC_STARTUP_DELAY_MULTIPLIER=64
-										-DPICO_FLASH_SIZE_BYTES=16777216
 										-DPICO_CORE1_STACK_SIZE=0x00
 										-DPICO_MALLOC_PANIC
 										-O2
@@ -278,10 +272,3 @@ if(COMPILE STREQUAL "WEB" OR COMPILE STREQUAL "WEBRP2350" )
 	)
 endif()
 
-if(SDBOOT STREQUAL "true" AND (COMPILE STREQUAL "PICORP2350" OR COMPILE STREQUAL "WEBRP2350"))
-	pico_set_linker_script(PicoMite ${CMAKE_SOURCE_DIR}/memmap_default_rp2350.ld)
-endif()
-
-if(SDBOOT STREQUAL "true" AND (COMPILE STREQUAL "PICO"))
-	pico_set_linker_script(PicoMite ${CMAKE_SOURCE_DIR}/memmap_default_rp2040.ld)
-endif()
