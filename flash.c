@@ -32,6 +32,8 @@ int flash_erase(uint32_t address, uint32_t size_bytes)
         while(1);
     }
 
+    rom_flash_flush_cache();
+
     return ret;
 #endif
 }
@@ -57,6 +59,8 @@ int flash_program(uint32_t address, const void* buf, uint32_t size_bytes)
         // need to debug all of these
         while(1);
     }
+
+    rom_flash_flush_cache();
 
     return ret;
 #endif

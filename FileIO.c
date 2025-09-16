@@ -96,6 +96,7 @@ uint8_t *gInBuf;
 char FlashReadBuffer[256];
 char FlashProgBuffer[256];
 char FlashLookBuffer[256];
+
 int fs_flash_read(const struct lfs_config *cfg, lfs_block_t block,
         lfs_off_t off, void *buffer, lfs_size_t size);
 int fs_flash_prog(const struct lfs_config *cfg, lfs_block_t block,
@@ -346,7 +347,7 @@ void ResetFlashStorage(int umount){
     FSerror=lfs_format(&lfs, &pico_lfs_cfg);ErrorCheck(0);
     FSerror=lfs_mount(&lfs, &pico_lfs_cfg);	ErrorCheck(0);
     int fnbr = FindFreeFileNbr();
-    BasicFileOpen("bootcount",fnbr,FA_WRITE | FA_OPEN_APPEND | FA_READ);
+    BasicFileOpen("bootcount",fnbr,FA_WRITE | FA_CREATE_ALWAYS);
     FSerror=lfs_file_read(&lfs, FileTable[fnbr].lfsptr, &boot_count, sizeof(boot_count));
     if(FSerror>0)FSerror=0;
     ErrorCheck(fnbr);
@@ -357,44 +358,52 @@ void ResetFlashStorage(int umount){
     if(FSerror>0)FSerror=0;
     ErrorCheck(fnbr);
     FileClose(fnbr);
- }
+}
 
-int __not_in_flash_func(fs_flash_read)(const struct lfs_config *cfg, lfs_block_t block,
+uintptr_t lfs_to_offset(lfs_block_t block, lfs_off_t off)
+{
+    return RoundUpK4(TOP_OF_SYSTEM_FLASH) + (Option.modbuff ? 1024*Option.modbuffsize : 0) + block*4096 + off;
+}
+
+int fs_flash_read(const struct lfs_config *cfg, lfs_block_t block,
         lfs_off_t off, void *buffer, lfs_size_t size)
 {
     assert(off  % cfg->read_size == 0);
     assert(size % cfg->read_size == 0);
     assert(block < cfg->block_count);
-    uint32_t addr = XIP_BASE + RoundUpK4(TOP_OF_SYSTEM_FLASH) + (Option.modbuff ? 1024*Option.modbuffsize : 0) + block*4096 + off;
+    uint32_t addr = XIP_BASE + lfs_to_offset(block, off);
     memcpy(buffer,(char *)addr,size);
     return 0;
 }
-int __not_in_flash_func(fs_flash_prog)(const struct lfs_config *cfg, lfs_block_t block,
+int fs_flash_prog(const struct lfs_config *cfg, lfs_block_t block,
             lfs_off_t off, const void *buffer, lfs_size_t size)
 {
     assert(off  % cfg->prog_size == 0);
     assert(size % cfg->prog_size == 0);
     assert(block < cfg->block_count);
 
-    uint32_t addr = RoundUpK4(TOP_OF_SYSTEM_FLASH) + (Option.modbuff ? 1024*Option.modbuffsize : 0) + block*4096 + off;
+    uint32_t addr = lfs_to_offset(block, off);
     disable_interrupts_pico();
     flash_program(addr, buffer, size);
     enable_interrupts_pico();
+
     return 0;
 }
-int __not_in_flash_func(fs_flash_erase)(const struct lfs_config *cfg, lfs_block_t block){
+int fs_flash_erase(const struct lfs_config *cfg, lfs_block_t block){
     assert(block < cfg->block_count);
 
-    uint32_t block_addr = RoundUpK4(TOP_OF_SYSTEM_FLASH) + (Option.modbuff ? 1024*Option.modbuffsize : 0) + block*4096;
-        disable_interrupts_pico();
-        flash_erase(block_addr, BLOCK_SIZE);
-        enable_interrupts_pico();
-        return 0;
+    uint32_t block_addr = lfs_to_offset(block, 0);
+    disable_interrupts_pico();
+    flash_erase(block_addr, cfg->block_size);
+    enable_interrupts_pico();
+    return 0;
 }
-int __not_in_flash_func(fs_flash_sync)(const struct lfs_config *c)
+
+int fs_flash_sync(const struct lfs_config *c)
 {
     return 0;
 }
+
 /*  @endcond */
 void MIPS16 cmd_disk(void){
     char *p=(char *)getCstring(cmdline);
